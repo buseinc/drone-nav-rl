@@ -1,0 +1,26 @@
+Ep   250 | obstacles  5 | eps 0.84 | train  30.4% | val success  68.0% crash  0.0% timeout 32.0% eff  97.5%  <- best, saved
+Ep   500 | obstacles  5 | eps 0.68 | train  47.6% | val success  55.5% crash  0.0% timeout 44.5% eff  94.6%
+Ep   750 | obstacles 10 | eps 0.53 | train  38.4% | val success  55.0% crash  0.0% timeout 45.0% eff  87.6%
+Ep  1000 | obstacles 10 | eps 0.37 | train  46.8% | val success  71.5% crash  0.0% timeout 28.5% eff  88.5%  <- best, saved
+Ep  1250 | obstacles 15 | eps 0.21 | train  68.8% | val success  81.5% crash  0.0% timeout 18.5% eff  92.7%  <- best, saved
+Ep  1500 | obstacles 15 | eps 0.05 | train  82.8% | val success  88.0% crash  0.0% timeout 12.0% eff  91.7%  <- best, saved
+Ep  1750 | obstacles 15 | eps 0.05 | train  90.8% | val success  89.5% crash  0.0% timeout 10.5% eff  93.0%  <- best, saved
+Ep  2000 | obstacles 15 | eps 0.05 | train  90.0% | val success  90.5% crash  0.0% timeout  9.5% eff  92.5%  <- best, saved
+Ep  2250 | obstacles 15 | eps 0.05 | train  87.6% | val success  91.0% crash  0.0% timeout  9.0% eff  92.5%  <- best, saved
+Ep  2500 | obstacles 15 | eps 0.05 | train  88.8% | val success  91.5% crash  0.0% timeout  8.5% eff  92.6%  <- best, saved
+Ep  2750 | obstacles 15 | eps 0.05 | train  91.6% | val success  90.5% crash  0.0% timeout  9.5% eff  95.6%
+Ep  3000 | obstacles 15 | eps 0.05 | train  91.2% | val success  92.0% crash  0.0% timeout  8.0% eff  94.5%  <- best, saved
+Ep  3250 | obstacles 15 | eps 0.05 | train  91.6% | val success  94.5% crash  0.0% timeout  5.5% eff  94.3%  <- best, saved
+Ep  3500 | obstacles 15 | eps 0.05 | train  90.4% | val success  95.5% crash  0.0% timeout  4.5% eff  93.5%  <- best, saved
+Ep  3750 | obstacles 15 | eps 0.05 | train  92.8% | val success  93.5% crash  0.0% timeout  6.5% eff  95.4%
+Ep  4000 | obstacles 15 | eps 0.05 | train  93.2% | val success  94.5% crash  0.0% timeout  5.5% eff  95.3%
+Ep  4250 | obstacles 15 | eps 0.05 | train  90.0% | val success  96.5% crash  0.0% timeout  3.5% eff  95.4%  <- best, saved
+Ep  4500 | obstacles 15 | eps 0.05 | train  93.2% | val success  96.0% crash  0.0% timeout  4.0% eff  94.8%
+Ep  4750 | obstacles 15 | eps 0.05 | train  93.6% | val success  95.5% crash  0.0% timeout  4.5% eff  94.9%
+Ep  5000 | obstacles 15 | eps 0.05 | train  91.6% | val success  93.0% crash  0.0% timeout  7.0% eff  94.6%
+Ep  5250 | obstacles 15 | eps 0.05 | train  90.4% | val success  94.0% crash  0.0% timeout  6.0% eff  95.4%
+Ep  5500 | obstacles 15 | eps 0.05 | train  89.6% | val success  94.0% crash  0.0% timeout  6.0% eff  95.1%
+Ep  5750 | obstacles 15 | eps 0.05 | train  91.2% | val success  94.5% crash  0.0% timeout  5.5% eff  95.6%
+Ep  6000 | obstacles 15 | eps 0.05 | train  92.8% | val success  92.0% crash  0.0% timeout  8.0% eff  95.4%
+
+Done. Best validation success: 96.5%

@@ -1,0 +1,5 @@
+Ep   250 | obstacles  5 | eps 0.92 | train  20.8% | val success  40.0% crash  0.0% timeout 60.0% eff  72.7%  <- best, saved
+Ep   500 | obstacles  5 | eps 0.84 | train  26.0% | val success  21.5% crash  0.0% timeout 78.5% eff  73.9%
+Ep   750 | obstacles 10 | eps 0.76 | train  12.0% | val success  16.5% crash  0.0% timeout 83.5% eff  79.5%
+Ep  1000 | obstacles 10 | eps 0.68 | train  13.2% | val success  14.0% crash  0.0% timeout 86.0% eff  70.8%
+Ep  1250 | obstacles 15 | eps 0.60 | train  16.8% | val success  23.0% crash  0.0% timeout 77.0% eff  73.7%

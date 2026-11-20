@@ -1,0 +1,26 @@
+Ep   500 | eps 0.76 | train  27.6% | val avg  53.0% | clean  57%(c 0)  wind  49%(c 0)  patrols  59%(c19)  wind+patrols  47%(c12)  <- best, saved
+Ep  1000 | eps 0.53 | train  30.8% | val avg  58.0% | clean  77%(c 0)  wind  44%(c 0)  patrols  68%(c 1)  wind+patrols  43%(c 5)  <- best, saved
+Ep  1500 | eps 0.29 | train  54.6% | val avg  70.8% | clean  88%(c 0)  wind  55%(c 0)  patrols  81%(c 2)  wind+patrols  59%(c 5)  <- best, saved
+Ep  2000 | eps 0.05 | train  71.4% | val avg  73.5% | clean  86%(c 0)  wind  60%(c 0)  patrols  87%(c 2)  wind+patrols  61%(c 7)  <- best, saved
+Ep  2500 | eps 0.05 | train  87.8% | val avg  78.5% | clean  89%(c 0)  wind  64%(c 0)  patrols  91%(c 3)  wind+patrols  70%(c 3)  <- best, saved
+Ep  3000 | eps 0.05 | train  86.8% | val avg  82.0% | clean  91%(c 0)  wind  64%(c 0)  patrols  93%(c 2)  wind+patrols  80%(c 5)  <- best, saved
+Ep  3500 | eps 0.05 | train  85.8% | val avg  83.8% | clean  91%(c 0)  wind  71%(c 0)  patrols  93%(c 1)  wind+patrols  80%(c 6)  <- best, saved
+Ep  4000 | eps 0.05 | train  88.2% | val avg  84.2% | clean  96%(c 0)  wind  71%(c 0)  patrols  91%(c 1)  wind+patrols  79%(c 5)  <- best, saved
+Ep  4500 | eps 0.05 | train  86.4% | val avg  86.5% | clean  90%(c 0)  wind  79%(c 0)  patrols  93%(c 1)  wind+patrols  84%(c 3)  <- best, saved
+Ep  5000 | eps 0.05 | train  88.2% | val avg  85.5% | clean  94%(c 0)  wind  69%(c 0)  patrols  95%(c 1)  wind+patrols  84%(c 3)
+Ep  5500 | eps 0.05 | train  90.6% | val avg  86.5% | clean  93%(c 0)  wind  78%(c 0)  patrols  93%(c 1)  wind+patrols  82%(c 3)
+Ep  6000 | eps 0.05 | train  88.0% | val avg  88.0% | clean  95%(c 0)  wind  79%(c 0)  patrols  95%(c 1)  wind+patrols  83%(c 4)  <- best, saved
+Ep  6500 | eps 0.05 | train  86.6% | val avg  86.0% | clean  95%(c 0)  wind  75%(c 0)  patrols  94%(c 1)  wind+patrols  80%(c 3)
+Ep  7000 | eps 0.05 | train  88.6% | val avg  89.5% | clean  97%(c 0)  wind  80%(c 0)  patrols  95%(c 1)  wind+patrols  86%(c 3)  <- best, saved
+Ep  7500 | eps 0.05 | train  90.0% | val avg  89.8% | clean  97%(c 0)  wind  81%(c 0)  patrols  97%(c 1)  wind+patrols  84%(c 3)  <- best, saved
+Ep  8000 | eps 0.05 | train  87.4% | val avg  87.8% | clean  96%(c 0)  wind  80%(c 0)  patrols  96%(c 1)  wind+patrols  79%(c 3)
+Ep  8500 | eps 0.05 | train  88.4% | val avg  88.2% | clean  98%(c 0)  wind  77%(c 0)  patrols  95%(c 1)  wind+patrols  83%(c 1)
+Ep  9000 | eps 0.05 | train  87.6% | val avg  87.2% | clean  97%(c 0)  wind  76%(c 0)  patrols  96%(c 1)  wind+patrols  80%(c 2)
+Ep  9500 | eps 0.05 | train  91.2% | val avg  86.5% | clean  98%(c 0)  wind  74%(c 0)  patrols  97%(c 0)  wind+patrols  77%(c 2)
+Ep 10000 | eps 0.05 | train  88.6% | val avg  88.0% | clean  96%(c 0)  wind  78%(c 0)  patrols  96%(c 1)  wind+patrols  82%(c 3)
+Ep 10500 | eps 0.05 | train  88.8% | val avg  87.8% | clean  95%(c 0)  wind  77%(c 0)  patrols  96%(c 1)  wind+patrols  83%(c 2)
+Ep 11000 | eps 0.05 | train  89.8% | val avg  87.8% | clean  99%(c 0)  wind  75%(c 0)  patrols  96%(c 1)  wind+patrols  81%(c 3)
+Ep 11500 | eps 0.05 | train  89.8% | val avg  89.8% | clean  98%(c 0)  wind  80%(c 0)  patrols  96%(c 1)  wind+patrols  85%(c 4)  <- best, saved
+Ep 12000 | eps 0.05 | train  88.2% | val avg  88.2% | clean  95%(c 0)  wind  80%(c 0)  patrols  97%(c 1)  wind+patrols  81%(c 3)
+
+Done. Best validation average: 89.8%

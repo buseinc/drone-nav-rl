@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Personal save files (stars, duel records)
+results/*.json
+
+# Old exports
+*.zip
