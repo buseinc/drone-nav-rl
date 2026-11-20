@@ -5,9 +5,9 @@ import random
 
 import pygame
 
-from src.game import common as ui
-from src.game.effects import Effects
-from src.game.scene import Scene
+from games.skyrush import common as ui
+from src.shared.effects import Effects
+from src.shared.scene import Scene
 
 
 class Flyby:
@@ -55,7 +55,7 @@ class TitleScene(Scene):
             if event.key == pygame.K_ESCAPE:
                 self.app.running = False
             else:
-                from src.game.menu import MenuScene
+                from games.skyrush.menu import MenuScene
                 self.app.sound.play("go")
                 self.app.change(MenuScene(self.app))
 

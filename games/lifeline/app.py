@@ -1,13 +1,13 @@
-"""Window, main loop, scene switching, screen shake and sound."""
+"""Lifeline window and main loop (same structure as SkyRush's App)."""
 
 import random
 
 import pygame
 
-from src.game import common as ui
-from src.game.agent import Agent
-from src.game.sound import Sounds
-from src.game.title import TitleScene
+from games.lifeline import common as ui
+from games.lifeline.scenes import TitleScene
+from src.shared.agent import Agent
+from src.shared.sound import Sounds
 
 
 class App:
@@ -16,17 +16,14 @@ class App:
     def __init__(self):
         pygame.mixer.pre_init(44100, -16, 2, 512)
         pygame.init()
-        pygame.display.set_caption("SkyRush")
+        pygame.display.set_caption("Lifeline")
         self.screen = pygame.display.set_mode((ui.WIDTH, ui.HEIGHT))
-        # Scenes draw on the canvas; the canvas is blitted with an offset
-        # while the screen shakes.
         self.canvas = pygame.Surface((ui.WIDTH, ui.HEIGHT))
         self.clock = pygame.time.Clock()
         ui.init_fonts()
-        self.sky = ui.Sky()
+        self.sky = ui.Sky(seed=11)
         self.agent = Agent()
         self.sound = Sounds()
-        self.settings = {"arena": 0, "level": 1, "fog": False}
         self.shake_time = 0
         self.shake_power = 0
         self.running = True
@@ -40,7 +37,7 @@ class App:
 
     def run(self):
         while self.running:
-            dt = min(self.clock.tick(self.FPS), 50)   # no huge jumps
+            dt = min(self.clock.tick(self.FPS), 50)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
@@ -50,7 +47,6 @@ class App:
                     self.scene.handle_event(event)
             self.scene.update(dt)
             self.scene.draw(self.canvas)
-
             offset = (0, 0)
             if self.shake_time > 0:
                 self.shake_time -= dt

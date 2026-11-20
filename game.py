@@ -1,6 +1,6 @@
-"""SkyRush - run with:  python game.py"""
+"""Shortcut that starts SkyRush (same as: python skyrush.py)."""
 
-from src.game.app import App
+from games.skyrush.app import App
 
 if __name__ == "__main__":
     App().run()

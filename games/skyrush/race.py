@@ -13,11 +13,12 @@ Fairness rules:
 import pygame
 
 from src.drone_env_v4 import HOVER
-from src.game import common as ui
-from src.game.drone_ctrl import DroneController
-from src.game.effects import Effects
-from src.game.scene import Scene, load_leaderboard, save_leaderboard
-from src.game.world import (AI_NAME, ARENAS, GRACE, LEVELS, TICK, AIPilot,
+from games.skyrush import common as ui
+from src.shared.drone_ctrl import DroneController
+from src.shared.effects import Effects
+from games.skyrush.save import load_leaderboard, save_leaderboard
+from src.shared.scene import Scene
+from src.shared.world import (AI_NAME, ARENAS, GRACE, LEVELS, TICK, AIPilot,
                             copy_env, make_env)
 
 CELL = 44
@@ -181,7 +182,7 @@ class RaceScene(Scene):
             self.on_exit(self.app, self.match_winner(),
                          self.round_stars["human"] if self.round_stars else 0)
         else:
-            from src.game.duel_setup import DuelSetupScene
+            from games.skyrush.duel_setup import DuelSetupScene
             self.app.change(DuelSetupScene(self.app))
 
     # ---------- scene API ----------

@@ -9,11 +9,12 @@ import math
 import pygame
 
 from src.drone_env_v4 import HOVER
-from src.game import common as ui
-from src.game.drone_ctrl import DroneController
-from src.game.effects import Effects
-from src.game.scene import Scene, load_leaderboard, save_leaderboard
-from src.game.world import AI_NAME, ARENAS, GRACE, LEVELS, TICK, copy_env, \
+from games.skyrush import common as ui
+from src.shared.drone_ctrl import DroneController
+from src.shared.effects import Effects
+from games.skyrush.save import load_leaderboard, save_leaderboard
+from src.shared.scene import Scene
+from src.shared.world import AI_NAME, ARENAS, GRACE, LEVELS, TICK, copy_env, \
     make_env
 
 ZONE_MISSIONS = [
@@ -50,7 +51,7 @@ MISSION_SEEDS = {
 def nova_lands(env):
     """Can ORCA (at full skill) fly this map? Bosses must be real fights."""
     if not _AGENT:
-        from src.game.agent import Agent
+        from src.shared.agent import Agent
         _AGENT.append(Agent())
     agent = _AGENT[0]
     if not agent.available:
@@ -140,7 +141,7 @@ class MissionMapScene(Scene):
             return
         k = event.key
         if k == pygame.K_ESCAPE:
-            from src.game.menu import MenuScene
+            from games.skyrush.menu import MenuScene
             self.app.change(MenuScene(self.app, selected=0))
         elif k in (pygame.K_RIGHT, pygame.K_d):
             self.move(1)
@@ -166,7 +167,7 @@ class MissionMapScene(Scene):
             return
         self.app.sound.play("go")
         if m["boss"]:
-            from src.game.race import RaceScene
+            from games.skyrush.race import RaceScene
             env = mission_env(m["zone"], 3)
             index = self.sel
 

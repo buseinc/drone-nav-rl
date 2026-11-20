@@ -12,12 +12,12 @@ import numpy as np
 import pygame
 
 from src.drone_env_v4 import HOVER
-from src.game import common as ui
-from src.game.agent import softmax
-from src.game.drone_ctrl import MOVE_MS, DroneController
-from src.game.effects import Effects
-from src.game.scene import Scene
-from src.game.world import AI_NAME, ARENAS, copy_env, make_env
+from games.skyrush import common as ui
+from src.shared.agent import softmax
+from src.shared.drone_ctrl import MOVE_MS, DroneController
+from src.shared.effects import Effects
+from src.shared.scene import Scene
+from src.shared.world import AI_NAME, ARENAS, copy_env, make_env
 
 CELL = 56
 ORIGIN = (40, 100)
@@ -140,7 +140,7 @@ class VisionScene(Scene):
             return
         k = event.key
         if k == pygame.K_ESCAPE:
-            from src.game.menu import MenuScene
+            from games.skyrush.menu import MenuScene
             self.app.change(MenuScene(self.app, selected=2))
         elif k == pygame.K_SPACE:
             self.autoplay = False

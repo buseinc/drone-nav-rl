@@ -3,12 +3,12 @@
 import pygame
 
 from src.drone_env_v4 import DroneEnvV4
-from src.game import common as ui
-from src.game.drone_ctrl import DroneController
-from src.game.effects import Effects
-from src.game.pathfinding import best_action
-from src.game.scene import Scene
-from src.game.world import AI_NAME, LEVELS
+from games.skyrush import common as ui
+from src.shared.drone_ctrl import DroneController
+from src.shared.effects import Effects
+from src.shared.pathfinding import best_action
+from src.shared.scene import Scene
+from src.shared.world import AI_NAME, LEVELS
 
 
 class Demo:
@@ -152,7 +152,7 @@ class GuideScene(Scene):
             return
         k = event.key
         if k == pygame.K_ESCAPE:
-            from src.game.menu import MenuScene
+            from games.skyrush.menu import MenuScene
             self.app.change(MenuScene(self.app, selected=3))
         elif k in (pygame.K_RIGHT, pygame.K_d, pygame.K_RETURN,
                    pygame.K_SPACE):
@@ -160,7 +160,7 @@ class GuideScene(Scene):
                 self.page += 1
                 self.app.sound.play("click")
             elif k == pygame.K_RETURN:
-                from src.game.menu import MenuScene
+                from games.skyrush.menu import MenuScene
                 self.app.change(MenuScene(self.app, selected=0))
         elif k in (pygame.K_LEFT, pygame.K_a) and self.page > 0:
             self.page -= 1
@@ -215,7 +215,7 @@ class GuideScene(Scene):
         if demo:
             demo.draw(surf, self.demo_origin(demo))
         elif p.get("lab"):
-            from src.game.menu import MenuScene
+            from games.skyrush.menu import MenuScene
             art = pygame.Rect(560, 200, 460, 300)
             surf.set_clip(right)
             MenuScene.art_lab(surf, art.inflate(-100, -60),

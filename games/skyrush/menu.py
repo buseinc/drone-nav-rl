@@ -4,9 +4,10 @@ import math
 
 import pygame
 
-from src.game import common as ui
-from src.game.scene import Scene, load_leaderboard
-from src.game.world import AI_NAME
+from games.skyrush import common as ui
+from games.skyrush.save import load_leaderboard
+from src.shared.scene import Scene
+from src.shared.world import AI_NAME
 
 CARDS = [
     {"name": "SKY MISSIONS", "sub": "16 missions · 4 zones · boss duels",
@@ -55,10 +56,10 @@ class MenuScene(Scene):
         self.app.sound.play("click")
 
     def start(self, index):
-        from src.game.duel_setup import DuelSetupScene
-        from src.game.guide import GuideScene
-        from src.game.missions import MissionMapScene
-        from src.game.vision import VisionScene
+        from games.skyrush.duel_setup import DuelSetupScene
+        from games.skyrush.guide import GuideScene
+        from games.skyrush.missions import MissionMapScene
+        from games.skyrush.vision import VisionScene
 
         if index in (0, 1, 2) and not self.app.agent.available:
             self.notice = f"{AI_NAME} is not trained yet: " \

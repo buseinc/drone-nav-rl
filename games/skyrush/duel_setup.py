@@ -4,9 +4,10 @@ import math
 
 import pygame
 
-from src.game import common as ui
-from src.game.scene import Scene, load_leaderboard
-from src.game.world import AI_NAME, ARENAS, LEVELS, make_env
+from games.skyrush import common as ui
+from games.skyrush.save import load_leaderboard
+from src.shared.scene import Scene
+from src.shared.world import AI_NAME, ARENAS, LEVELS, make_env
 
 ROWS = ["arena", "level", "fog"]
 
@@ -24,7 +25,7 @@ class DuelSetupScene(Scene):
             return
         k, s = event.key, self.s
         if k == pygame.K_ESCAPE:
-            from src.game.menu import MenuScene
+            from games.skyrush.menu import MenuScene
             self.app.change(MenuScene(self.app, selected=1))
         elif k in (pygame.K_UP, pygame.K_w):
             self.row = (self.row - 1) % len(ROWS)
@@ -42,7 +43,7 @@ class DuelSetupScene(Scene):
         elif k == pygame.K_f:
             s["fog"] = not s["fog"]
         elif k in (pygame.K_RETURN, pygame.K_SPACE):
-            from src.game.race import RaceScene
+            from games.skyrush.race import RaceScene
             self.app.sound.play("go")
             self.app.change(RaceScene(self.app, s["arena"], s["level"],
                                       s["fog"]))
