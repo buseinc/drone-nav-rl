@@ -5,6 +5,7 @@ import random
 import pygame
 
 from games.skyrush import common as ui
+from games.skyrush.save import select_profile
 from src.shared.agent import Agent
 from src.shared.sound import Sounds
 from games.skyrush.title import TitleScene
@@ -16,6 +17,8 @@ class App:
     def __init__(self):
         pygame.mixer.pre_init(44100, -16, 2, 512)
         pygame.init()
+        pygame.key.stop_text_input()
+        select_profile(None)
         pygame.display.set_caption("SkyRush")
         self.screen = pygame.display.set_mode((ui.WIDTH, ui.HEIGHT))
         # Scenes draw on the canvas; the canvas is blitted with an offset
@@ -44,7 +47,8 @@ class App:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_m:
+                elif (event.type == pygame.KEYDOWN and event.key == pygame.K_m
+                      and not getattr(self.scene, "typing_name", False)):
                     self.sound.enabled = not self.sound.enabled
                 else:
                     self.scene.handle_event(event)

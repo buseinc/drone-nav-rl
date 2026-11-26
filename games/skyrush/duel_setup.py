@@ -46,7 +46,7 @@ class DuelSetupScene(Scene):
             from games.skyrush.race import RaceScene
             self.app.sound.play("go")
             self.app.change(RaceScene(self.app, s["arena"], s["level"],
-                                      s["fog"]))
+                                      s["fog"], cinematic_finish=True))
             return
         else:
             return
@@ -145,6 +145,8 @@ class DuelSetupScene(Scene):
                 elif p in env.wind:
                     color = ui.WIND_ARROW
                 pygame.draw.rect(surf, color, rect, border_radius=3)
+                if p == env.goal:
+                    ui.draw_landing_mark(surf, rect.center, cell, ui.SKY_TOP)
         for e in env.enemies:
             for p in e["track"]:
                 pygame.draw.circle(surf, ui.ENEMY, (origin[0] + p[1] * cell +

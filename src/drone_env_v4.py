@@ -204,7 +204,7 @@ class DroneEnvV4:
     def enemy_cells(self, t):
         return {self.enemy_pos(e, t) for e in self.enemies}
 
-    def transition(self, pos, action, t):
+    def transition(self, pos, action, t, *, follow_action=None, use_wind=True):
         """Pure function: where does `action` at tick t take the drone?
 
         Returns (cells_visited_this_tick, event). For a wall crash the list
@@ -217,8 +217,15 @@ class DroneEnvV4:
 
         path = [new]
         cur = new
+        if follow_action is not None and cur != self.goal and (not use_wind or cur not in self.wind):
+            next_dr, next_dc = MOVES[follow_action]
+            nxt = (cur[0] + next_dr, cur[1] + next_dc)
+            if self.is_blocked(nxt):
+                return path, "crash"
+            cur = nxt
+            path.append(cur)
         seen = {cur}
-        for _ in range(MAX_PUSH):          # wind chain
+        for _ in range(MAX_PUSH if use_wind else 0):  # wind chain
             if cur == self.goal or cur not in self.wind:
                 break
             w = self.wind[cur]

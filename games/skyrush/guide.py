@@ -83,7 +83,7 @@ def build_pages(agent):
          "demo": Demo(6, (5, 0), (0, 5), {(3, 1), (3, 2), (1, 3), (2, 4),
                                           (4, 4)})},
         {"title": "LAND FIRST", "color": ui.GOAL,
-         "lines": ["Fly to the green landing pad.",
+         "lines": ["Fly to the green ring to land.",
                    "Fewer ticks = more stars:",
                    "3 stars = the best possible route",
                    "(the white dots), 2 stars = close to it.",

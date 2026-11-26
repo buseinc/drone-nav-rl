@@ -55,9 +55,9 @@ class TitleScene(Scene):
             if event.key == pygame.K_ESCAPE:
                 self.app.running = False
             else:
-                from games.skyrush.menu import MenuScene
+                from games.skyrush.profiles import ProfileScene
                 self.app.sound.play("go")
-                self.app.change(MenuScene(self.app))
+                self.app.change(ProfileScene(self.app))
 
     def update(self, dt):
         self.t += dt

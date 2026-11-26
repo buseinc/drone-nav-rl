@@ -4,7 +4,7 @@ import math
 
 import pygame
 
-from src.drone_env_v3 import MOVES
+from src.drone_env_v4 import MOVES
 
 WIDTH, HEIGHT = 1100, 720
 
@@ -304,6 +304,18 @@ def view_cells(env, pos=None):
 
 # ---------- drawing ----------
 
+def draw_landing_mark(surf, center, size, color):
+    """Draw the same landing ring on the board and in the map preview."""
+    pygame.draw.circle(surf, color, center, max(2, round(size * 0.30)),
+                       max(1, round(size * 0.075)))
+
+
+def draw_landing_tile(surf, rect, pulse):
+    fill = lerp_color((26, 112, 93), (36, 152, 122), pulse)
+    pygame.draw.rect(surf, fill, rect, border_radius=7)
+    draw_landing_mark(surf, rect.center, rect.width, (232, 255, 242))
+
+
 def draw_grid(surf, env, origin, cell, cell_colors=None, visible=None):
     """Board with obstacles and goal.
 
@@ -324,12 +336,7 @@ def draw_grid(surf, env, origin, cell, cell_colors=None, visible=None):
             hidden = visible is not None and pos not in visible
 
             if pos == env.goal:
-                pygame.draw.rect(surf, lerp_color(GOAL, WHITE, 0.2 * pulse),
-                                 rect, border_radius=6)
-                ctr = rect.center
-                pygame.draw.circle(surf, (40, 120, 85), ctr,
-                                   int(cell * 0.33), 3)
-                text(surf, "H", ctr, (30, 100, 70), "cell", center=True)
+                draw_landing_tile(surf, rect, pulse)
             elif hidden:
                 pygame.draw.rect(surf, FOG, rect, border_radius=6)
             elif pos in env.obstacles:
@@ -369,7 +376,7 @@ def draw_wind(surf, rect, direction, ticks):
 
 
 def draw_enemies(surf, env, origin, cell, tick, progress, visible=None,
-                 warn=True):
+                 warn=True, warn_tick=None):
     """Enemy drones gliding from tick-1 to tick, plus a warning on the
     cells they will occupy on the next tick (the AI's enemy_next input).
     """
@@ -384,8 +391,9 @@ def draw_enemies(surf, env, origin, cell, tick, progress, visible=None,
                          cell_center(origin, cell, a),
                          cell_center(origin, cell, b), 6)
 
+    next_tick = tick + 1 if warn_tick is None else warn_tick
     for e in env.enemies:
-        nxt = env.enemy_pos(e, tick + 1)
+        nxt = env.enemy_pos(e, next_tick)
         if warn and (visible is None or nxt in visible):
             rect = cell_rect(origin, cell, nxt).inflate(-4, -4)
             pygame.draw.rect(surf, ENEMY, rect, 2, border_radius=6)

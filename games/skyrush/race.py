@@ -10,10 +10,16 @@ Fairness rules:
     the neural network does.
 """
 
+from collections import deque
+
 import pygame
 
 from src.drone_env_v4 import HOVER
 from games.skyrush import common as ui
+from games.skyrush.airframe_art import draw_airframe
+from games.skyrush.airframes import ORCA, equipped_airframe
+from games.skyrush.duel_finish import (PHOTO_HOLD_MS, REPLAY_TICK_MS,
+                                       draw_landing_drone, draw_pad, replay_frame)
 from src.shared.drone_ctrl import DroneController
 from src.shared.effects import Effects
 from games.skyrush.save import load_leaderboard, save_leaderboard
@@ -35,13 +41,18 @@ EVENT_TEXT = {"goal": "LANDED", "crash": "CRASHED", "timeout": "TIME OUT",
 
 
 class RaceScene(Scene):
+    tick_ms = TICK
+    show_optimal_route = True
+
     def __init__(self, app, arena, level, fog=False, rounds=5, map_env=None,
-                 on_exit=None, title=None):
+                 on_exit=None, title=None, cinematic_finish=False):
         super().__init__(app)
         self.arena, self.level, self.fog = arena, level, fog
         self.rounds = rounds
         self.map_env = map_env       # fixed map (boss duels)
         self.on_exit = on_exit
+        self.cinematic_finish = cinematic_finish
+        self.airframes = {"human": equipped_airframe(), "ai": ORCA}
         self.title = title or "DUEL"
         self.round = 0
         self.wins = {"human": 0, "ai": 0}
@@ -53,13 +64,12 @@ class RaceScene(Scene):
 
     def next_round(self):
         self.round += 1
-        base = self.map_env or make_env(self.arena)
-        self.envs = {"human": copy_env(base), "ai": copy_env(base)}
-        self.ctrl = {w: DroneController(e, TICK, linear=True)
+        self.envs = self.build_envs()
+        self.ctrl = {w: DroneController(e, self.tick_ms, linear=True)
                      for w, e in self.envs.items()}
         self.human_waiting = False
-        self.pilot = AIPilot(self.app.agent, self.level)
-        self.opt_ticks, self.optimal = base.optimal_route()
+        self.pilot = self.build_pilot()
+        self.opt_ticks, self.optimal = self.envs["human"].optimal_route()
         self.results = {"human": None, "ai": None}
         self.round_stars = None
         self.winner = None
@@ -70,6 +80,16 @@ class RaceScene(Scene):
         self.end_timer = 0
         self.queued = None
         self.last_beep = None
+        self.replay_moves = {who: deque(maxlen=2) for who in self.ctrl}
+        self.photo_elapsed = 0
+        self.photo_still = None
+
+    def build_envs(self):
+        base = self.map_env or make_env(self.arena)
+        return {"human": copy_env(base), "ai": copy_env(base)}
+
+    def build_pilot(self):
+        return AIPilot(self.app.agent, self.level)
 
     def px(self, who):
         return ui.cell_center(ORIGIN[who], CELL, self.ctrl[who].pos())
@@ -94,6 +114,8 @@ class RaceScene(Scene):
             self.human_waiting = False
             self.ctrl["human"].move(HOVER)
         for who, c in self.ctrl.items():
+            if self.cinematic_finish and self.ticks and self.results[who] is None:
+                self.replay_moves[who].append((tuple(c.points), c.move_ms))
             event = c.complete()
             if event:
                 self.land(who, event)
@@ -120,7 +142,7 @@ class RaceScene(Scene):
             if action is None:
                 self.human_waiting = True    # decide later in this tick
             else:
-                self.move_human(action, TICK)
+                self.move_human(action, self.tick_ms)
         if self.results["ai"] is None:
             self.ctrl["ai"].move(self.pilot.act(self.envs["ai"]))
 
@@ -156,6 +178,16 @@ class RaceScene(Scene):
         self.app.sound.play("win" if self.winner == "human" else "lose"
                             if self.winner == "ai" else "click")
         self.phase = "round_over"
+
+    def simultaneous_landing(self):
+        human, ai = self.results["human"], self.results["ai"]
+        return (human is not None and ai is not None
+                and human["event"] == ai["event"] == "goal"
+                and human["time"] == ai["time"])
+
+    @property
+    def replay_duration(self):
+        return REPLAY_TICK_MS * len(self.replay_moves["human"])
 
     def match_winner(self):
         h, a = self.wins["human"], self.wins["ai"]
@@ -200,7 +232,9 @@ class RaceScene(Scene):
         elif self.phase == "racing" and event.key == pygame.K_SPACE:
             self.queued = HOVER
         elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
-            if self.phase == "round_over":
+            if self.phase == "photo_finish":
+                self.finish_round()
+            elif self.phase == "round_over":
                 if self.round < self.rounds:
                     self.next_round()
                 else:
@@ -211,7 +245,8 @@ class RaceScene(Scene):
                 else:
                     self.app.change(RaceScene(self.app, self.arena,
                                               self.level, self.fog,
-                                              self.rounds))
+                                              self.rounds,
+                                              cinematic_finish=self.cinematic_finish))
 
     def update(self, dt):
         self.fx.update(dt)
@@ -229,7 +264,7 @@ class RaceScene(Scene):
             return
 
         if self.phase == "racing":
-            if self.human_waiting and self.tick_clock <= GRACE:
+            if self.human_waiting and self.tick_clock <= GRACE * self.tick_ms / TICK:
                 action = self.queued if self.queued is not None \
                     else ui.held_action()
                 if action is not None:
@@ -237,13 +272,13 @@ class RaceScene(Scene):
                     # flies a bit faster to arrive on time.
                     self.queued = None
                     self.human_waiting = False
-                    self.move_human(action, TICK - self.tick_clock)
+                    self.move_human(action, self.tick_ms - self.tick_clock)
             self.tick_clock += dt
-            while self.tick_clock >= TICK and self.phase == "racing":
-                self.tick_clock -= TICK
+            while self.tick_clock >= self.tick_ms and self.phase == "racing":
+                self.tick_clock -= self.tick_ms
                 self.tick()
             for who, c in self.ctrl.items():
-                c.sync(TICK - self.tick_clock)
+                c.sync(self.tick_ms - self.tick_clock)
                 if c.busy:
                     self.fx.trail(self.px(who),
                                   ui.lerp_color(COLOR[who], ui.BG, 0.4))
@@ -252,6 +287,13 @@ class RaceScene(Scene):
                 c.update(dt)
             self.end_timer += dt
             if self.end_timer >= END_DELAY:
+                if self.cinematic_finish and self.simultaneous_landing() and self.replay_duration:
+                    self.phase = "photo_finish"
+                else:
+                    self.finish_round()
+        elif self.phase == "photo_finish":
+            self.photo_elapsed += dt
+            if self.photo_elapsed >= self.replay_duration + PHOTO_HOLD_MS:
                 self.finish_round()
 
     # ---------- drawing ----------
@@ -263,8 +305,8 @@ class RaceScene(Scene):
         revealed = self.phase in ("round_over", "match_over")
 
         # name plate
-        ui.draw_drone(surf, (0, 0), (origin[0] - 8, origin[1] - 58), 40,
-                      COLOR[who])
+        draw_airframe(surf, (origin[0] + 11, origin[1] - 39), 36,
+                      self.airframes[who], pygame.time.get_ticks())
         ui.text(surf, NAME[who], (origin[0] + 34, origin[1] - 50),
                 COLOR[who], "lg")
         sub = "you" if who == "human" else LEVELS[self.level]["name"].lower()
@@ -278,7 +320,13 @@ class RaceScene(Scene):
         if self.fog and not revealed:
             visible = ui.view_cells(env)
         ui.draw_grid(surf, env, origin, CELL, visible=visible)
-        progress = min(1.0, self.tick_clock / TICK) \
+        controller = self.ctrl[who]
+        position = controller.pos()
+        landed = res and res["event"] == "goal"
+        if self.cinematic_finish:
+            draw_pad(surf, origin, CELL, env.goal, position, COLOR[who],
+                     pygame.time.get_ticks(), self.end_timer if landed else None)
+        progress = min(1.0, self.tick_clock / self.tick_ms) \
             if self.phase == "racing" else 1.0
         # During tick k patrols glide from pos(k-1) to pos(k); the warning
         # shows pos(k+1), where they will be after the next decision.
@@ -286,11 +334,16 @@ class RaceScene(Scene):
                         visible, warn=self.phase == "racing")
         ui.draw_path(surf, env.path, origin, CELL,
                      ui.lerp_color(COLOR[who], ui.BG, 0.35), 3)
-        if revealed and self.optimal:
+        if revealed and self.show_optimal_route and self.optimal:
             ui.draw_dots(surf, self.optimal, origin, CELL, ui.WHITE, 4)
         if not (res and res["event"] == "crash"):
-            ui.draw_drone(surf, self.ctrl[who].pos(), origin, CELL,
-                          COLOR[who])
+            descent = None
+            if self.cinematic_finish and landed:
+                descent = 1.0
+            elif self.cinematic_finish and controller.pending == "goal":
+                descent = controller.t
+            draw_landing_drone(surf, origin, CELL, position, self.airframes[who], descent,
+                               controller.last_action)
 
         y = origin[1] + size + 14
         if res:
@@ -328,6 +381,9 @@ class RaceScene(Scene):
                                    0 if i < self.round else 2)
 
     def draw(self, surf):
+        if self.phase == "photo_finish":
+            self.draw_photo_finish(surf)
+            return
         ui.draw_background(surf)
         self.draw_header(surf)
         self.draw_board(surf, "human")
@@ -353,6 +409,53 @@ class RaceScene(Scene):
         elif self.phase == "match_over":
             self.draw_match_over(surf)
 
+    def draw_photo_finish(self, surf):
+        if self.photo_still is not None:
+            surf.blit(self.photo_still, (0, 0))
+            return
+        ui.draw_background(surf)
+        cx = ui.WIDTH // 2
+        frozen = self.photo_elapsed >= self.replay_duration
+        elapsed = min(self.photo_elapsed, self.replay_duration)
+        zoom = elapsed / self.replay_duration
+        ui.text(surf, "PHOTO FINISH", (cx, 50), ui.WHITE, "xl", center=True)
+        ui.text(surf, "SAME TICK · DRAW" if frozen else "SLOW MOTION",
+                (cx, 103), ui.GOLD, "md", center=True)
+
+        for who in ("human", "ai"):
+            rect = pygame.Rect(59 if who == "human" else 564, 141, 477, 458)
+            env = self.envs[who]
+            position, descent = replay_frame(self.replay_moves[who], self.tick_ms, elapsed)
+            distance = max(abs(a - b) for a, b in zip(env.goal, position))
+            cell = round(min(70 + 32 * zoom, (rect.height - 112) / (distance + 1)))
+            row, col = ((a + b) / 2 for a, b in zip(env.goal, position))
+            origin = (round(rect.centerx - col * cell - (cell - 3) / 2),
+                      round(rect.centery - row * cell - (cell - 3) / 2 + 16))
+            clip = surf.get_clip()
+            surf.set_clip(rect.inflate(-2, -2).clip(clip))
+            surf.fill(ui.BG, rect)
+            ui.draw_grid(surf, env, origin, cell)
+            draw_pad(surf, origin, cell, env.goal, position, COLOR[who], elapsed,
+                     touchdown=0 if frozen else None)
+            draw_landing_drone(surf, origin, cell, position, self.airframes[who], descent)
+            surf.set_clip(clip)
+
+            pygame.draw.rect(surf, ui.PANEL, (rect.x, rect.y, rect.width, 53))
+            pygame.draw.rect(surf, COLOR[who], rect, 2)
+            ui.text(surf, NAME[who], (rect.x + 19, rect.y + 12), COLOR[who], "lg")
+            if frozen:
+                arrival = self.results[who]["time"] / 1000
+                ui.text(surf, f"{arrival:.2f}s", (rect.right - 19, rect.y + 15),
+                        ui.WHITE, "num", right=True)
+
+        progress = pygame.Rect(59, 621, 982, 4)
+        pygame.draw.rect(surf, ui.PANEL_LIGHT, progress, border_radius=2)
+        progress.width = round(progress.width * zoom)
+        pygame.draw.rect(surf, ui.GOLD, progress, border_radius=2)
+        ui.hint_bar(surf, [("ENTER", "result" if frozen else "skip replay")], y=665)
+        if frozen:
+            self.photo_still = surf.copy()
+
     def draw_countdown(self, surf):
         n = 3 - self.timer // 1000
         k = (self.timer % 1000) / 1000
@@ -375,13 +478,16 @@ class RaceScene(Scene):
             other_event = r[other]["event"]
             if other_event == "dnf":
                 gap = self.time_behind(other) / 1000
-                why = (f"photo finish, {gap:.2f}s ahead" if gap < 0.3
-                       else f"{gap:.2f}s ahead")
+                why = f"{gap:.2f}s ahead"
+                if gap < 0.3:
+                    why = "close finish" if self.cinematic_finish else f"photo finish, {why}"
             else:
                 why = f"{NAME[other]} {EVENT_TEXT[other_event].lower()}"
             head = f"{NAME[self.winner]} TAKES THE ROUND"
         else:
             head, why = "DEAD HEAT", "nobody landed first"
+            if self.cinematic_finish and self.simultaneous_landing():
+                why = "both landed on the same tick"
         color = (ui.PLAYER if self.winner == "human" else
                  ui.DRONE if self.winner == "ai" else ui.WHITE)
         ui.text(surf, head, (rect.x + 22, rect.y + 8), color, "lg")
