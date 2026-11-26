@@ -3,7 +3,7 @@ import os
 import pygame
 import torch
 
-from src.drone_env_v3 import DroneEnvV3
+from legacy.v3_dqn.drone_env_v3 import DroneEnvV3
 from src.dqn_model import DQN
 
 pygame.init()
@@ -64,7 +64,7 @@ def restart(new_map=True):
 def load_ai():
     global model
 
-    path = "models/dqn_v3.pth"
+    path = "legacy/models/dqn_v3.pth"
 
     if not os.path.exists(path):
         return False

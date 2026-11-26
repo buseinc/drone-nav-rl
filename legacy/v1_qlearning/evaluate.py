@@ -1,11 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from src.drone_env import DroneEnv
+from legacy.v1_qlearning.drone_env import DroneEnv
 
 # Ortamı ve eğitilmiş Q-table'ı yükle
 env = DroneEnv()
-q_table = np.load("models/q_table.npy")
+q_table = np.load("legacy/models/q_table.npy")
 
 state = env.reset()
 path = [state]
@@ -82,5 +82,5 @@ ax.plot(
 ax.set_title("Learned Drone Navigation Path")
 ax.legend()
 
-plt.savefig("results/learned_path.png", dpi=150)
+plt.savefig("legacy/results/learned_path.png", dpi=150)
 plt.show()

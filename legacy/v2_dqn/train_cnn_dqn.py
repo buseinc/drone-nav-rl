@@ -8,8 +8,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from src.drone_env_v2 import DroneEnvV2
-from src.dqn_model import DQN
+from legacy.v2_dqn.drone_env_v2 import DroneEnvV2
+from legacy.v2_dqn.cnn_dqn_model import CNNDQN
 
 
 # Reproducibility
@@ -41,10 +41,10 @@ state_size = len(env.get_state())
 action_size = 4
 
 # Main network learns Q-values
-policy_net = DQN(state_size, action_size).to(device)
+policy_net = CNNDQN(state_size, action_size).to(device)
 
 # Target network provides more stable targets
-target_net = DQN(state_size, action_size).to(device)
+target_net = CNNDQN(state_size, action_size).to(device)
 target_net.load_state_dict(policy_net.state_dict())
 target_net.eval()
 
@@ -200,13 +200,14 @@ for episode in range(1, EPISODES + 1):
 # Save model and results
 torch.save(
     policy_net.state_dict(),
-    "models/dqn_model.pth"
+    "legacy/models/cnn_dqn_model.pth"
 )
 
 pd.DataFrame(results).to_csv(
-    "results/dqn_training.csv",
+    "legacy/results/cnn_dqn_training.csv",
     index=False
 )
 
 print("\nDQN training completed!")
-print("Model saved: models/dqn_model.pth")
+print("Model saved: models/cnn_dqn_model.pth")
+

@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from src.drone_env import DroneEnv
+from legacy.v1_qlearning.drone_env import DroneEnv
 
 
 # Create environment
@@ -80,7 +80,7 @@ for episode in range(episodes):
 os.makedirs("models", exist_ok=True)
 os.makedirs("results", exist_ok=True)
 
-np.save("models/q_table.npy", q_table)
+np.save("legacy/models/q_table.npy", q_table)
 
 results = pd.DataFrame({
     "episode": np.arange(1, episodes + 1),
@@ -88,7 +88,7 @@ results = pd.DataFrame({
     "success": success_history
 })
 
-results.to_csv("results/training_results.csv", index=False)
+results.to_csv("legacy/results/training_results.csv", index=False)
 
 # Plot learning curve
 results["reward_smooth"] = (
@@ -107,7 +107,7 @@ plt.xlabel("Episode")
 plt.ylabel("Average Reward (100 episodes)")
 plt.grid(True)
 
-plt.savefig("results/training_curve.png")
+plt.savefig("legacy/results/training_curve.png")
 plt.show()
 
 print("Training completed!")

@@ -1,7 +1,7 @@
 
 import torch
 
-from src.drone_env_v2 import DroneEnvV2
+from legacy.v2_dqn.drone_env_v2 import DroneEnvV2
 from src.dqn_model import DQN
 
 env = DroneEnvV2()

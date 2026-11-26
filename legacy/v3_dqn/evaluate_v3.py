@@ -3,7 +3,7 @@
 import numpy as np
 import torch
 
-from src.drone_env_v3 import DroneEnvV3
+from legacy.v3_dqn.drone_env_v3 import DroneEnvV3
 
 
 def run_episode(env, model):
@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     env = DroneEnvV3()
     model = DQN(env.state_size, 4)
-    model.load_state_dict(torch.load("models/dqn_v3.pth",
+    model.load_state_dict(torch.load("legacy/models/dqn_v3.pth",
                                      map_location="cpu", weights_only=True))
     r = evaluate(model)
     print(f"Test maps: 200 (15 obstacles, unseen seed)")

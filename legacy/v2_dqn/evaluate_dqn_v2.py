@@ -1,6 +1,6 @@
-﻿import torch
+import torch
 
-from src.drone_env_v2 import DroneEnvV2
+from legacy.v2_dqn.drone_env_v2 import DroneEnvV2
 from src.dqn_model import DQN
 
 env = DroneEnvV2(seed=2026)
@@ -8,7 +8,7 @@ env = DroneEnvV2(seed=2026)
 model = DQN(state_size=104, action_size=4)
 model.load_state_dict(
     torch.load(
-        "models/dqn_model.pth",
+        "legacy/models/dqn_model.pth",
         map_location="cpu",
         weights_only=True
     )

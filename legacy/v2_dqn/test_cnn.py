@@ -1,7 +1,7 @@
-﻿import torch
+import torch
 
-from src.drone_env_v2 import DroneEnvV2
-from src.cnn_dqn_model import CNNDQN
+from legacy.v2_dqn.drone_env_v2 import DroneEnvV2
+from legacy.v2_dqn.cnn_dqn_model import CNNDQN
 
 env = DroneEnvV2()
 state = env.reset()

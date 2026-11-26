@@ -13,9 +13,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from src.drone_env_v3 import DroneEnvV3
+from legacy.v3_dqn.drone_env_v3 import DroneEnvV3
 from src.dqn_model import DQN
-from src.evaluate_v3 import evaluate
+from legacy.v3_dqn.evaluate_v3 import evaluate
 
 SEED = 42
 random.seed(SEED)
@@ -41,7 +41,7 @@ CURRICULUM = [
     (EPISODES, 15, None),
 ]
 
-os.makedirs("models/checkpoints", exist_ok=True)
+os.makedirs("legacy/models/checkpoints", exist_ok=True)
 
 env = DroneEnvV3(seed=SEED)
 state_size, action_size = env.state_size, 4
@@ -137,7 +137,7 @@ for episode in range(1, EPISODES + 1):
 
     if episode in CHECKPOINTS:
         torch.save(policy_net.state_dict(),
-                   f"models/checkpoints/dqn_v3_ep{episode}.pth")
+                   f"legacy/models/checkpoints/dqn_v3_ep{episode}.pth")
 
     if episode % EVAL_EVERY == 0:
         # Validation maps (seed 7) are different from the final test maps
@@ -150,7 +150,7 @@ for episode in range(1, EPISODES + 1):
         tag = ""
         if val["success"] > best_success:
             best_success = val["success"]
-            torch.save(policy_net.state_dict(), "models/dqn_v3.pth")
+            torch.save(policy_net.state_dict(), "legacy/models/dqn_v3.pth")
             tag = "  <- best, saved"
 
         print(f"Ep {episode:5d} | obstacles {env.obstacle_count:2d} | "
@@ -160,6 +160,6 @@ for episode in range(1, EPISODES + 1):
               f"timeout {100 * val['timeout']:4.1f}% "
               f"eff {100 * val['path_efficiency']:5.1f}%{tag}", flush=True)
 
-torch.save(policy_net.state_dict(), "models/checkpoints/dqn_v3_final.pth")
-pd.DataFrame(results).to_csv("results/dqn_v3_training.csv", index=False)
+torch.save(policy_net.state_dict(), "legacy/models/checkpoints/dqn_v3_final.pth")
+pd.DataFrame(results).to_csv("legacy/results/dqn_v3_training.csv", index=False)
 print(f"\nDone. Best validation success: {100 * best_success:.1f}%")

@@ -1,4 +1,4 @@
-from src.drone_env import DroneEnv
+from legacy.v1_qlearning.drone_env import DroneEnv
 
 env = DroneEnv()
 
